@@ -90,22 +90,39 @@ st.subheader("📊 Customer Segments Visualization")
 
 fig, ax = plt.subplots(figsize=(8, 5))
 
+# Existing data points (clusters)
 ax.scatter(
     X_scaled[:, 0],
     X_scaled[:, 1],
     c=df['Cluster'],
-    cmap='tab10'
+    cmap='tab10',
+    alpha=0.6
 )
 
+# Labels
 ax.set_xlabel("Income (scaled)")
 ax.set_ylabel("Spending Score (scaled)")
 ax.set_title("Customer Segments")
 
-# legend fix
+# Plot cluster legends
 for i, name in cluster_names.items():
     ax.scatter([], [], label=name)
 
-ax.legend(title="Customer Segments")
+# ---------------- IMPORTANT PART ----------------
+# Plot user input point (ONLY when user clicks predict)
+if submit:
+    input_scaled = scaler.transform(np.array([[income, spend_score]]))
+
+    ax.scatter(
+        input_scaled[0][0],
+        input_scaled[0][1],
+        color='black',
+        s=200,
+        marker='X',
+        label='Your Input'
+    )
+
+ax.legend()
 
 st.pyplot(fig)
 
