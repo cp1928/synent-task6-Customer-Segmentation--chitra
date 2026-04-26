@@ -1,5 +1,6 @@
 import streamlit as st
 import numpy as np
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
@@ -23,7 +24,8 @@ based on their **income and spending behavior**.
 - Improve customer retention  
 """)
 
-df = pd.read_csv(r"C:\Users\cp055\Desktop\customer-segmentation/data/Mall_Customers.csv")   
+file_path = os.path.join("data", "Mall_Customers.csv")
+df = pd.read_csv(file_path)  
 X = df[['Annual Income (k$)', 'Spending Score (1-100)']]
 
 scaler = StandardScaler()
