@@ -23,7 +23,7 @@ based on their **income and spending behavior**.
 - Improve customer retention  
 """)
 
-df = pd.read_csv("..../data/Mall_Customers.csv")   
+df = pd.read_csv(r"C:\Users\cp055\Desktop\customer-segmentation/data/Mall_Customers.csv")   
 X = df[['Annual Income (k$)', 'Spending Score (1-100)']]
 
 scaler = StandardScaler()

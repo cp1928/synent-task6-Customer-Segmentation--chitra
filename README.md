@@ -16,9 +16,6 @@ This project segments customers into distinct groups based on their **income** a
 
 - Total Records: ~200 customers  
 
-⚠️ Dataset is not included in this repository.  
-Please download it and place it in: data/Mall_Customers.csv
-
 
 ---
 
