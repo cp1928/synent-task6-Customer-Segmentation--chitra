@@ -16,7 +16,7 @@ st.write("Group customers based on income and spending behavior")
 st.markdown("""
 ### 📌 About This Project
 This application uses **Machine Learning (K-Means Clustering)** to segment customers  
-based on their **income and spending behavior**.
+based on their income and spending behavior.
 
 📈 Businesses can use these insights to:
 - Identify high-value customers  
@@ -24,7 +24,7 @@ based on their **income and spending behavior**.
 - Improve customer retention  
 """)
 
-# ---------------- LOAD DATA (FIXED PATH) ----------------
+# ---------------- LOAD DATA ----------------
 file_path = os.path.join("data", "Mall_Customers.csv")
 df = pd.read_csv(file_path)
 
@@ -42,10 +42,10 @@ df['Cluster'] = kmeans.fit_predict(X_scaled)
 # ---------------- CLUSTER LABELS ----------------
 cluster_names = {
     0: "Average Customers",
-    1: "Premium Customers 💎",
-    2: "Impulse Buyers 🛍️",
-    3: "Careful Customers 🤔",
-    4: "Low Value Customers 💸"
+    1: "Premium Customers",
+    2: "Impulse Buyers",
+    3: "Careful Customers",
+    4: "Low Value Customers"
 }
 
 df['Segment'] = df['Cluster'].map(cluster_names)
@@ -60,18 +60,19 @@ with st.sidebar.form("input_form"):
 
 # ---------------- PREDICTION ----------------
 if submit:
-    input_data = scaler.transform([[income, spend_score]])
-    cluster = kmeans.predict(input_data)[0]
+    input_data = np.array([[income, spend_score]])
+    input_scaled = scaler.transform(input_data)
+    cluster = kmeans.predict(input_scaled)[0]
 
     st.subheader("📊 Prediction Result")
-    st.success(f"🎯 This customer is classified as: {cluster_names[cluster]}")
+    st.success(f"🎯 Customer Segment: {cluster_names[cluster]}")
 
     insights = {
-        0: "Average customers. Maintain engagement with regular offers.",
-        1: "High-value customers. Target VIP deals and luxury products.",
-        2: "Impulse buyers. Use discounts and emotional marketing.",
-        3: "Careful customers. Focus on value-based messaging.",
-        4: "Low-value customers. Low marketing priority."
+        0: "Average customers. Maintain engagement.",
+        1: "High-value customers. Target premium offers.",
+        2: "Impulse buyers. Use discounts.",
+        3: "Careful customers. Focus on value.",
+        4: "Low-value customers. Low priority."
     }
 
     st.info(f"💡 Insight: {insights[cluster]}")
@@ -83,25 +84,25 @@ st.subheader("📊 Cluster Summary")
 summary = df.groupby('Segment')[['Annual Income (k$)', 'Spending Score (1-100)']].mean()
 st.dataframe(summary)
 
-# ---------------- VISUALIZATION (FIXED) ----------------
+# ---------------- VISUALIZATION ----------------
 st.write("")
 st.subheader("📊 Customer Segments Visualization")
 
 fig, ax = plt.subplots(figsize=(8, 5))
 
 ax.scatter(
-    df['Annual Income (k$)'],
-    df['Spending Score (1-100)'],
+    X_scaled[:, 0],
+    X_scaled[:, 1],
     c=df['Cluster'],
     cmap='tab10'
 )
 
-ax.set_xlabel("Annual Income (k$)")
-ax.set_ylabel("Spending Score (1-100)")
+ax.set_xlabel("Income (scaled)")
+ax.set_ylabel("Spending Score (scaled)")
 ax.set_title("Customer Segments")
 
-# FIXED LEGEND (NO ERRORS)
-for cluster_id, name in cluster_names.items():
+# legend fix
+for i, name in cluster_names.items():
     ax.scatter([], [], label=name)
 
 ax.legend(title="Customer Segments")
