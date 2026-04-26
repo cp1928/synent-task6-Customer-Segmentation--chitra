@@ -90,32 +90,28 @@ st.subheader("📊 Customer Segments Visualization")
 
 fig, ax = plt.subplots(figsize=(8, 5))
 
-# Existing data points (clusters)
+# ORIGINAL VALUES (IMPORTANT FIX)
 ax.scatter(
-    X_scaled[:, 0],
-    X_scaled[:, 1],
+    X['Annual Income (k$)'],
+    X['Spending Score (1-100)'],
     c=df['Cluster'],
     cmap='tab10',
     alpha=0.6
 )
 
-# Labels
-ax.set_xlabel("Income (scaled)")
-ax.set_ylabel("Spending Score (scaled)")
+ax.set_xlabel("Annual Income (k$)")
+ax.set_ylabel("Spending Score (1-100)")
 ax.set_title("Customer Segments")
 
-# Plot cluster legends
+# cluster legend
 for i, name in cluster_names.items():
     ax.scatter([], [], label=name)
 
-# ---------------- IMPORTANT PART ----------------
-# Plot user input point (ONLY when user clicks predict)
+# input point on ORIGINAL SCALE
 if submit:
-    input_scaled = scaler.transform(np.array([[income, spend_score]]))
-
     ax.scatter(
-        input_scaled[0][0],
-        input_scaled[0][1],
+        income,
+        spend_score,
         color='black',
         s=200,
         marker='X',
@@ -123,15 +119,22 @@ if submit:
     )
 
 ax.legend()
-
 st.pyplot(fig)
 
-# ---------------- EVALUATION ----------------
+# ---------------- MODEL EVALUATION ----------------
 st.write("")
 st.subheader("📊 Model Evaluation")
 
 sil_score = silhouette_score(X_scaled, df['Cluster'])
-st.write(f"Silhouette Score: {sil_score:.2f}")
+inertia = kmeans.inertia_
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.metric("Silhouette Score", f"{sil_score:.2f}")
+
+with col2:
+    st.metric("Inertia", f"{inertia:.2f}")
 
 # ---------------- DATA VIEW ----------------
 if st.checkbox("Show Dataset"):
